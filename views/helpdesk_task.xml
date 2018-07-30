@@ -1,0 +1,44 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="helpdesk_task.deadline">
+      <field name="name">helpdesk_task.deadline</field>
+      <field name="model">helpdesk.ticket</field>
+      <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+      <field name="arch" type="xml">
+        <field name="company_id" position="before">
+            <field name="date_final"/>
+        </field>
+        <field name="sla_name" position="replace">
+          <field name="limit" style="background:red;color:white;width:135px;font-size: 14px;margin:0 auto;padding:3px;text-align:center;"
+           nolabel="1"/>
+            <!-- attrs="{'invisible': [('state', 'not in', 'done')]}" -->
+        </field>
+      </field>
+    </record>
+    <!-- Kanban -->
+    <record model="ir.ui.view" id="helpdesk_task.kanban">
+      <field name="name">helpdesk_task.kanban</field>
+      <field name="model">helpdesk.ticket</field>
+      <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_kanban"/>
+      <field name="arch" type="xml">
+        <xpath expr="//t[@t-name='kanban-box']//div//div[@class='oe_kanban_content']//div[@t-if='record.deadline &amp;&amp; record.deadline.raw_value &amp;&amp; record.sla_active.raw_value']" position="before">
+          <t t-if="record.date_final.raw_value">
+            <t t-if="new Date(record.date_final.raw_value) &lt; (new Date())">
+              <div style="color:red">
+                <span class="fa fa-clock-o" style="margin:0px 5px 0px 0px;"/>
+                <field name="date_final" readonly="1"/>
+              </div>
+            </t>
+            <t t-if="new Date(record.date_final.raw_value) &gt; (new Date())">
+              <div style="color:green">
+                <span class="fa fa-clock-o" style="margin:0px 5px 0px 0px;"/>
+                <field name="date_final" readonly="1"/>
+              </div>
+            </t>
+          </t>
+        </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>
